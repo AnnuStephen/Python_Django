@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 36px;">Welcome, {{ user.username }}</h2>
+    <p class="text-center mb-4" style="font-size: 18px;">View your appointments, medical history, billing details, and health resources here.</p>
+    <!-- <a href="{% url 'create_profile' %}" class="btn btn-info mb-3">Add Your Details</a> -->
+
+    <div class="text-center mb-4">
+        <a href="{% url 'create_appointment' %}" class="btn btn-primary" style="font-size: 18px;">Make Appointments</a>
+    </div>
+
+    <div class="row">
+        <!-- Appointments Section -->
+        <div class="col-md-6">
+            <h3 class="text-primary" style="font-size: 24px;">Appointments</h3>
+            <ul class="list-group">
+                {% for appointment in appointments %}
+                <li class="list-group-item" style="font-size: 18px;">
+                    <strong>{{ appointment.date }}</strong> - {{ appointment.status }}
+                    
+                    {% for bill in billing_info %}
+                    {% if bill.appointment == appointment %}
+                    <br><strong>Bill Amount:</strong> {{ bill.amount }} -
+                    {% if bill.payment_status == 'Paid' %}
+                        Paid
+                    {% else %}
+                        <a href="{% url 'pay_bill' bill.id %}" class="btn btn-success btn-sm" style="font-size: 16px;">Pay Now</a>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </li>
+                {% empty %}
+                <li class="list-group-item" style="font-size: 18px;">No appointments scheduled.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Medical History Section -->
+        <div class="col-md-6">
+            <h3 class="text-primary" style="font-size: 24px;">Medical History</h3>
+            {% for history in medical_histories %}
+            <div class="mb-3" style="font-size: 18px;">
+                <p><strong>Date:</strong> {{ history.date }}</p>
+                <p><strong>Diagnosis:</strong> {{ history.diagnosis }}</p>
+                <p><strong>Medications:</strong> {{ history.medications }}</p>
+                <p><strong>Allergies:</strong> {{ history.allergies }}</p>
+                <p><strong>Treatment History:</strong> {{ history.treatment_history }}</p>
+            </div>
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Prescriptions Section -->
+    <div class="mt-4">
+        <h3 class="text-primary" style="font-size: 24px;">Prescriptions</h3>
+        {% if prescriptions %}
+        <ul class="list-group">
+            {% for prescription in prescriptions %}
+            <li class="list-group-item" style="font-size: 18px;">
+                <strong>Medication:</strong> {{ prescription.medication }}<br>
+                <strong>Dosage:</strong> {{ prescription.dosage }}<br>
+                <strong>Prescribed on:</strong> {{ prescription.prescription_date }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p style="font-size: 18px;">No prescriptions available.</p>
+        {% endif %}
+    </div>
+
+    <!-- Health Resources Section -->
+    <div class="mt-4">
+        <h3 class="text-primary" style="font-size: 24px;">Health Resources</h3>
+        <ul class="list-group">
+            {% for resource in resources %}
+            <li class="list-group-item" style="font-size: 18px;">
+                {{ resource.title }} - <a href="{{ resource.link }}" target="_blank" class="btn btn-link" style="font-size: 18px;">View Resource</a>
+            </li>
+            {% empty %}
+            <li class="list-group-item" style="font-size: 18px;">No resources available.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

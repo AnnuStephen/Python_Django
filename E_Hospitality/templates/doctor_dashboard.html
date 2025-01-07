@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 36px;">Welcome, Dr. {{ user.username }}</h2>
+    <p class="text-center mb-4" style="font-size: 18px;">View your schedule and prescriptions here.</p>
+
+    <div class="row">
+        <!-- Schedule Section -->
+        <div class="col-md-12">
+            <h3 class="text-primary" style="font-size: 24px;">Schedule</h3>
+            <table class="table table-bordered" style="font-size: 18px;">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.patient.first_name }} {{ appointment.patient.last_name }}</td>
+                        <td>{{ appointment.date }}</td>
+                        <td>{{ appointment.time }}</td>
+                        <td>{{ appointment.status }}</td>
+    
+                        {% if appointment.medical_history_added and appointment.prescription_added %}
+                        <!-- Show Create Bill link if both medical history and prescription are added -->
+                        <td>
+                            <a href="{% url 'create_bill' appointment.id %}" class="btn btn-warning" style="font-size: 16px;">Create Bill</a>
+                        </td>
+                        {% else %}
+                        <!-- Show Add Medical History link if medical history and prescription are not added -->
+                        <td>
+                            <a href="{% url 'medical_history' appointment.id %}" class="btn btn-info" style="font-size: 16px;">Add Medical History</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center" style="font-size: 18px;">No appointments found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

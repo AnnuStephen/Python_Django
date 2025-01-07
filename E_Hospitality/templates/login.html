@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 style="text-align: center; font-size: 32px;">Login Page</h1>
+<form method="POST" style="max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+    {% csrf_token %}
+    
+    <!-- Username Field -->
+    <label for="username" style="display: block; margin-bottom: 5px; font-size: 18px;">Username:</label>
+    <input type="text" name="username" id="username" required style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 18px;">
+
+    
+    <!-- Password Field -->
+    <label for="password" style="display: block; margin-bottom: 5px; font-size: 18px;">Password:</label>
+    <input type="password" name="password" id="password" required style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 18px;">
+
+    <!-- Submit Button -->
+    <button type="submit" style="width: 100%; padding: 14px; background-color: #007BFF; color: white; border: none; border-radius: 4px; font-size: 18px;">Login</button>
+</form>
+{% endblock %}
+ 
