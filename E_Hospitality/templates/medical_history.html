@@ -2,35 +2,43 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4" style="font-size: 36px;">Add Medical History</h2>
-    
-    <form method="POST">
+    <h2 class="text-center mb-4" style="font-size: 36px; font-weight: bold; color: #0056b3;">Add Medical History</h2>
+
+    <form method="POST" class="mx-auto" style="max-width: 600px; background-color: #f9f9f9; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
         {% csrf_token %}
+        
         <div class="mb-4">
             <h3 class="text-primary" style="font-size: 24px;">Add Medical History</h3>
             <div class="form-group" style="font-size: 18px;">
                 {{ form_medical_history.as_p }}
             </div>
         </div>
-        
+
         <div class="mb-4">
             <h3 class="text-primary" style="font-size: 24px;">Add Prescription</h3>
             <div class="form-group" style="font-size: 18px;">
                 {{ form_prescription.as_p }}
             </div>
         </div>
+        
+        <div class="mb-4">
+            <h3 class="text-primary" style="font-size: 24px;">Health Resource</h3>
+            <div class="form-group" style="font-size: 18px;">
+                {{ form_health_resource.as_p }}
+            </div>
+        </div>
 
-        <button type="submit" class="btn btn-success" style="font-size: 18px; padding: 10px 20px; margin-top: 20px;">
-            Save
-        </button>
+        <div class="form-group text-center mt-4">
+            <button type="submit" class="btn btn-success btn-lg" style="font-size: 18px; width: 100%;">Save</button>
+        </div>
     </form>
 </div>
 
 <style>
     /* Reducing width and height of textarea */
     textarea {
-        width: 100%; /* Set width to 100% or a smaller value like 70% */
-        height: 100px; /* Adjust height as needed */
+        width: 100%;
+        height: 100px;
     }
 </style>
 {% endblock %}

@@ -7,6 +7,7 @@ class Doctor(models.Model):
     user = models.OneToOneField('accounts.User', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    facility = models.ForeignKey('adminapp.Facility', on_delete=models.CASCADE, related_name='doctors')
     specialization = models.CharField(max_length=100)
     contact_number = models.CharField(max_length=15)
     email = models.EmailField()

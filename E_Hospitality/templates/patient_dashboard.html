@@ -78,7 +78,9 @@
         <ul class="list-group">
             {% for resource in resources %}
             <li class="list-group-item" style="font-size: 18px;">
-                {{ resource.title }} - <a href="{{ resource.link }}" target="_blank" class="btn btn-link" style="font-size: 18px;">View Resource</a>
+
+                {{ resource.content }} - <a href="{{ resource.link }}" target="_blank" class="btn btn-link" style="font-size: 18px;">View Resource</a>
+
             </li>
             {% empty %}
             <li class="list-group-item" style="font-size: 18px;">No resources available.</li>

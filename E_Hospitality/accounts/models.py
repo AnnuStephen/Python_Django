@@ -5,6 +5,7 @@ class User(models.Model):
     ROLE_CHOICES = [
         ('Patient', 'Patient'),
         ('Doctor', 'Doctor'),
+        ('Admin', 'Admin'),
     ]
     
     username = models.CharField(max_length=100, unique=True)

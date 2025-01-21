@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Create Appointment for {{ patient.user.username }}</h3>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Create Appointment</button>
+</form>
+
+<a href="{% url 'admin_dashboard' %}">Back to Admin Dashboard</a>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h3 class="text-primary" style="font-size: 24px;">Patient Details</h3>
+    {% if patient %}
+        <a href="{% url 'admin_create_appointment' patient.user.id %}" class="btn btn-primary" style="font-size: 18px;">
+            Create Appointment
+        </a>
+
+        <p><strong>First Name:</strong> {{ patient.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ patient.last_name }}</p>
+        <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }}</p>
+        <p><strong>Address:</strong> {{ patient.address }}</p>
+        <p><strong>Phone Number:</strong> {{ patient.phone_number }}</p>
+        <p><strong>Email:</strong> {{ patient.email }}</p>
+    {% else %}
+        <p>No patient data available.</p>
+    {% endif %}
+
+    <div class="mt-4">
+        <h3 class="text-primary" style="font-size: 24px;">Appointments</h3>
+        <table class="table table-bordered" style="font-size: 18px;">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Appointment Date & Time</th>
+                    <th>Status</th>
+                    {% if billing_info.exists %}
+                        <th>Bill Amount</th>
+                    {% endif %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.doctor }}</td>
+                        <td>{{ appointment.date }} - {{ appointment.time }}</td>
+                        <td>{{ appointment.status }}</td>
+
+                        {% if billing_info.exists %}
+                            {% for bill in billing_info %}
+                                {% if bill.appointment == appointment %}
+                                    <td>
+                                        {{ bill.amount }} -
+                                        {% if bill.payment_status == 'Paid' %}
+                                            Paid
+                                        {% elif bill.payment_status == 'Pending' %}
+                                            Payment Pending
+                                        {% else %}
+                                            Payment Not Provided
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        <td>
+                            <a href="{% url 'edit_appointment' appointment.id %}" style="font-size: 18px; color: rgb(39, 188, 233);">Edit</a> |
+                            <a href="{% url 'cancel_appointment' appointment.id %}" style="font-size: 18px; color: rgb(39, 188, 233);">Cancel</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No appointments scheduled.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <h3 class="text-primary" style="font-size: 24px;">Medical History</h3>
+        <table class="table table-bordered" style="font-size: 18px;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Diagnosis</th>
+                    <th>Medications</th>
+                    <th>Allergies</th>
+                    <th>Treatment History</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for history in medical_histories %}
+                    <tr>
+                        <td>{{ history.date }}</td>
+                        <td>{{ history.diagnosis }}</td>
+                        <td>{{ history.medications }}</td>
+                        <td>{{ history.allergies }}</td>
+                        <td>{{ history.treatment_history }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No medical histories available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <h3 class="text-primary" style="font-size: 24px;">Prescriptions</h3>
+        {% if prescriptions %}
+            <table class="table table-bordered" style="font-size: 18px;">
+                <thead>
+                    <tr>
+                        <th>Medication</th>
+                        <th>Dosage</th>
+                        <th>Prescribed On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescription in prescriptions %}
+                        <tr>
+                            <td>{{ prescription.medication }}</td>
+                            <td>{{ prescription.dosage }}</td>
+                            <td>{{ prescription.prescription_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="font-size: 18px;">No prescriptions available.</p>
+        {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <h3 class="text-primary" style="font-size: 24px;">Health Resources</h3>
+        {% if resources %}
+            <table class="table table-bordered" style="font-size: 18px;">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resource in resources %}
+                        <tr>
+                            <td>{{ resource.content }}</td>
+                            <td>
+                                <a href="{{ resource.link }}" target="_blank" class="btn btn-link" style="font-size: 18px;">View Resource</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="font-size: 18px;">No resources available.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

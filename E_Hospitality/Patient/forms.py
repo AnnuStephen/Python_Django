@@ -33,4 +33,4 @@ class BillingForm(forms.ModelForm):
 class HealthResourceForm(forms.ModelForm):
     class Meta:
         model = HealthResource
-        fields = ['title', 'content', 'link']
+        fields = [ 'content', 'link']
