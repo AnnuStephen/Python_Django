@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-vb#t8zt!7mturdpr+&01o4i%!^u9zyolw!^dakv2d8prim#23m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['AnnuStephen.pythonanywhere.com']
 
 
 # Application definition
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Patient',  
+    'Patient',
     'Doctor',
     'accounts',
 ]
@@ -81,12 +81,12 @@ WSGI_APPLICATION = 'E_Hospitality.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'e-hospital',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'LOCALHOST',
+        'NAME': 'AnnuStephen$e_hospital',
+        'USER': 'AnnuStephen',
+        'PASSWORD': 'python123',
+        'HOST': 'AnnuStephen.mysql.pythonanywhere-services.com',
         'PORT': '3306',
-        
+
     }
 }
 
