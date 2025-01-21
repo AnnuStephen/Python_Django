@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 
 
-from Patient.forms import MedicalHistoryForm
+from Patient.forms import HealthResourceForm, MedicalHistoryForm
 from Patient.models import Appointment, Billing, Patient
 from accounts.models import User
 from .forms import DoctorProfileForm, EPrescriptionForm
@@ -19,7 +19,7 @@ def doctor_dashboard(request):
             try:
                 doctor = Doctor.objects.get(user=user)
                 prescriptions = EPrescription.objects.filter(doctor=doctor)
-                appointments = Appointment.objects.filter(doctor=doctor ,status='Scheduled')  # Filter appointments for this doctor
+                appointments = Appointment.objects.filter(doctor=doctor ,status__in=['Scheduled', 'Rescheduled'])  # Filter appointments for this doctor
 
                 return render(request, 'doctor_dashboard.html', {
                     'user': user,
@@ -40,6 +40,7 @@ def doctor_dashboard(request):
     
 
 
+
 def create_doctor(request):
     if 'user_id' in request.session:
         user_id = request.session['user_id']
@@ -49,7 +50,7 @@ def create_doctor(request):
             form = DoctorProfileForm(request.POST)
             if form.is_valid():
                 doctor = form.save(commit=False)
-                doctor.user = user  
+                doctor.user = user  # Associate the doctor with the logged-in user
                 doctor.save()
                 messages.success(request, "Your details have been successfully added!")
                 return redirect('doctor_dashboard')  
@@ -66,51 +67,60 @@ def create_doctor(request):
 
 
 
-
-
 def add_medical_history(request, appointment_id):
     if 'user_id' in request.session:
-        user_id = request.session['user_id']
+        user_id = request.session['user_id'] 
         user = get_object_or_404(User, id=user_id)
 
-       
         if user.role == 'Doctor':
             try:
-               
                 appointment = get_object_or_404(Appointment, id=appointment_id, doctor__user=user)
-                
+
                 if request.method == 'POST':
                     form_medical_history = MedicalHistoryForm(request.POST)
                     form_prescription = EPrescriptionForm(request.POST)
-                    
-                    if form_medical_history.is_valid() and form_prescription.is_valid():
-                        
+                    form_health_resource = HealthResourceForm(request.POST)
+
+                    if (
+                        form_medical_history.is_valid()
+                        and form_prescription.is_valid()
+                        and form_health_resource.is_valid()
+                    ):
+                        # Save medical history
                         medical_history = form_medical_history.save(commit=False)
-                        medical_history.patient = appointment.patient  
+                        medical_history.patient = appointment.patient
                         medical_history.save()
 
                         # Save prescription
                         prescription = form_prescription.save(commit=False)
-                        prescription.patient = appointment.patient 
-                        prescription.doctor = appointment.doctor  
+                        prescription.patient = appointment.patient
+                        prescription.doctor = appointment.doctor
                         prescription.save()
 
-                        
+                        # Save health resource
+                        health_resource = form_health_resource.save(commit=False)
+                        health_resource.patient = appointment.patient
+                        health_resource.doctor = appointment.doctor
+                        health_resource.save()
+
+                        # Update appointment
                         appointment.medical_history_added = True
                         appointment.prescription_added = True
                         appointment.save()
 
-                        messages.success(request, "Medical history and prescription added successfully!")
-                        return redirect('doctor_dashboard')  
+                        messages.success(request, "Medical history, prescription, and health resource added successfully!")
+                        return redirect('doctor_dashboard')
+
                 else:
                     form_medical_history = MedicalHistoryForm()
                     form_prescription = EPrescriptionForm()
+                    form_health_resource = HealthResourceForm()
 
-                
                 return render(request, 'medical_history.html', {
                     'form_medical_history': form_medical_history,
                     'form_prescription': form_prescription,
-                    'appointment': appointment
+                    'form_health_resource': form_health_resource,
+                    'appointment': appointment,
                 })
 
             except Appointment.DoesNotExist:
@@ -119,13 +129,11 @@ def add_medical_history(request, appointment_id):
 
         else:
             messages.error(request, "Access denied! You are not authorized to view this page.")
-            return redirect('login')  
+            return redirect('login')
 
     else:
         messages.error(request, "You are not logged in. Please log in to add medical history and prescription.")
-        return redirect('login')  
-
-
+        return redirect('login')
 
 
 def create_bill(request, appointment_id):

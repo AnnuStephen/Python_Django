@@ -5,7 +5,15 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center mb-4" style="font-size: 36px;">Welcome, Dr. {{ user.username }}</h2>
-    <p class="text-center mb-4" style="font-size: 18px;">View your schedule and prescriptions here.</p>
+    {% if doctor %}
+    <p><strong>Name:</strong> {{ doctor.user.username }}</p>
+    <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+    <p><strong>Contact:</strong> {{ doctor.contact_number }}</p>
+    <p><strong>Hospital name:</strong> {{ doctor.facility.hosp_name }}</p>
+    {% else %}
+    <p>No doctor data available.</p>
+    {% endif %}
+    <p class="text-center mb-4" style="font-size: 18px;">View your schedule and add prescriptions here.</p>
 
     <div class="row">
         <!-- Schedule Section -->
@@ -28,16 +36,18 @@
                         <td>{{ appointment.date }}</td>
                         <td>{{ appointment.time }}</td>
                         <td>{{ appointment.status }}</td>
-    
+
                         {% if appointment.medical_history_added and appointment.prescription_added %}
                         <!-- Show Create Bill link if both medical history and prescription are added -->
                         <td>
-                            <a href="{% url 'create_bill' appointment.id %}" class="btn btn-warning" style="font-size: 16px;">Create Bill</a>
+                            <a href="{% url 'create_bill' appointment.id %}" class="btn btn-warning"
+                                style="font-size: 16px;">Create Bill</a>
                         </td>
                         {% else %}
                         <!-- Show Add Medical History link if medical history and prescription are not added -->
                         <td>
-                            <a href="{% url 'medical_history' appointment.id %}" class="btn btn-info" style="font-size: 16px;">Add Medical History</a>
+                            <a href="{% url 'medical_history' appointment.id %}" class="btn btn-info"
+                                style="font-size: 16px;">Add Medical History</a>
                         </td>
                         {% endif %}
                     </tr>

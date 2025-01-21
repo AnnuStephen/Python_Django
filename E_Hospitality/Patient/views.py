@@ -96,9 +96,8 @@ def create_appointment(request):
 
 
 
-# # Set your secret key
-stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
+stripe.api_key = settings.STRIPE_TEST_SECRET_KEY 
 def pay_bill(request, bill_id):
     if 'user_id' in request.session:
         user_id = request.session['user_id']
@@ -106,21 +105,23 @@ def pay_bill(request, bill_id):
         
         if user.role == 'Patient':
             try:
+                # Get the bill for the specific patient and appointment
                 bill = get_object_or_404(Billing, id=bill_id, patient__user=user)
 
                 if bill.payment_status == 'Paid':
                     messages.info(request, "The bill has already been paid.")
                     return redirect('patient_dashboard')
-                
+
+                # Stripe payment session
                 checkout_session = stripe.checkout.Session.create(
                     payment_method_types=['card'],
                     line_items=[{
                         'price_data': {
-                            'currency': 'usd',  
+                            'currency': 'usd',
                             'product_data': {
-                                'name': f"Bill for {bill.patient.first_name} {bill.patient.last_name}",
+                                'name': f"Bill for Appointment {bill.appointment.id}",
                             },
-                            'unit_amount': int(bill.amount * 100), 
+                            'unit_amount': int(bill.amount * 100),
                         },
                         'quantity': 1,
                     }],
@@ -129,7 +130,6 @@ def pay_bill(request, bill_id):
                     cancel_url=request.build_absolute_uri('/patient/payment-cancelled/'),
                 )
 
-               
                 return redirect(checkout_session.url, code=303)
 
             except Billing.DoesNotExist:
@@ -138,13 +138,11 @@ def pay_bill(request, bill_id):
 
         else:
             messages.error(request, "Access denied! You are not authorized to pay this bill.")
-            return redirect('login') 
+            return redirect('login')
 
     else:
         messages.error(request, "You are not logged in. Please log in to pay the bill.")
-        return redirect('login')  
-    
-
+        return redirect('login')
 
 
 def payment_success(request):
@@ -159,21 +157,23 @@ def payment_success(request):
                 return redirect('patient_dashboard')
 
             try:
+                # Get the bill and associated appointment
                 bill = get_object_or_404(Billing, id=bill_id, patient__user=user)
 
                 if bill.payment_status == 'Paid':
                     messages.info(request, "This bill has already been paid.")
                     return redirect('patient_dashboard')
 
+                # Mark the bill as paid
                 bill.payment_status = 'Paid'
                 bill.save()
 
+                # Update the specific appointment status
+                appointment = bill.appointment
+                appointment.status = 'Completed'
+                appointment.save()
 
-                appointments = Appointment.objects.filter(patient=bill.patient, status='Scheduled')
-                appointments.update(status='Completed')
-
-
-                messages.success(request, "Payment successful and appointments marked as completed!")
+                messages.success(request, "Payment successful and appointment marked as completed!")
                 return redirect('patient_dashboard')
 
             except Billing.DoesNotExist:
@@ -204,5 +204,6 @@ def payment_cancelled(request):
     else:
         messages.error(request, "You are not logged in. Please log in to continue.")
         return render(request, 'patient_dashboard.html', {'payment_status': 'error'})
+
 
 

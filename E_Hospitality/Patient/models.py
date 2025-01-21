@@ -47,7 +47,7 @@ class Billing(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Paid', 'Paid')])
     invoice_date = models.DateField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"Bill for {self.patient} - {self.amount}"
 
@@ -55,6 +55,9 @@ class HealthResource(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     link = models.URLField(blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
+    doctor = models.ForeignKey('Doctor.Doctor', on_delete=models.CASCADE, null=True, blank=True)
+
 
     def __str__(self):
         return self.title

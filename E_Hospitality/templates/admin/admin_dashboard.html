@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4" style="font-size: 36px; font-weight: bold; color: #0056b3;">Admin Dashboard</h1>
+
+    <!-- Create New User Section -->
+    <div class="mb-5">
+        <h3 class="mb-3" style="font-size: 28px; font-weight: bold; color: #333;">Manage Users</h3>
+        <a href="{% url 'create_users' %}" class="btn btn-primary mb-3" style="font-size: 18px;">Create New User</a>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th style="font-size: 18px; text-align: center;">Username</th>
+                    <th style="font-size: 18px; text-align: center;">Role</th>
+                    <th style="font-size: 18px; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        {% if user.role == 'Doctor' %}
+                        <a href="{% url 'doctor_details' user.id %}" style="color: #118db6; font-size: 18px;">
+                            {{ user.username }}
+                        </a>
+                        {% elif user.role == 'Patient' %}
+                        <a href="{% url 'patient_details' user.id %}" style="color: #118db6; font-size: 18px;">
+                            {{ user.username }}
+                        </a>
+                        {% else %}
+                        <span style="color: #118db6; font-size: 18px;">
+                            {{ user.username }}
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center; font-size: 18px;">{{ user.role }}</td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'edit_user' user.id %}" class="text-primary" style="font-size: 16px;">Edit</a> |
+                        <a href="{% url 'delete_user' user.id %}" class="text-danger"
+                            style="font-size: 16px; margin-left: 4px"
+                            onclick="return confirm('Do you want to delete this user?');">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Manage Facilities Section -->
+    <div class="mt-5">
+        <h3 class="mb-3" style="font-size: 28px; font-weight: bold; color: #333;">Manage Facilities</h3>
+        <a href="{% url 'create_facility' %}" class="btn btn-primary mb-3" style="font-size: 18px;">Add Facility</a>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th style="font-size: 18px; text-align: center;">Facility Name</th>
+                    <th style="font-size: 18px; text-align: center;">Location</th>
+                    <th style="font-size: 18px; text-align: center;">Contact</th>
+                    <th style="font-size: 18px; text-align: center;">Actions</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if facilities %}
+                {% for facility in facilities %}
+                <tr>
+                    <td style="font-size: 18px;">{{ facility.hosp_name }}</td>
+                    <td style="font-size: 18px;">{{ facility.address }}</td>
+                    <td style="font-size: 18px;">{{ facility.contact }}</td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'edit_facility' facility.id %}" class="text-primary" style="font-size: 16px;">Edit</a>
+                        <a href="{% url 'delete_facility' facility.id %}" class="text-danger" style="font-size: 16px; margin-left: 4px"
+                            onclick="return confirm('Are you sure you want to delete this facility?');">Delete</a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center" style="font-size: 18px; color: #888;">No facilities available
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

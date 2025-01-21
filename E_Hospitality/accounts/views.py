@@ -37,6 +37,10 @@ def login(request):
                     return redirect('patient_dashboard')  
                 elif user.role == 'Doctor':
                     return redirect('doctor_dashboard') 
+                elif user.role == 'Admin':
+                    return redirect('admin_dashboard') 
+                
+                
             except User.DoesNotExist:
                 messages.error(request, "Invalid credentials!")
                 return redirect('login')
